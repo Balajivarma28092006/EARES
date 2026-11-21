@@ -1,45 +1,5 @@
+#include "config.h"
 #include "workflowInit.h"
-
-// system configurations
-const int bandwith = 1;
-const double Oc = 0.1; // over head cost its 0.1 at one place and 0.5 at one's
-const double Ku = 2;   // number of faults occurrences
-
-/*
- * WCET represents the worst case execution times for the vm and tasks
- * these are given as say WCET[i][j] represents ith VM and jth task
- * so if i want 3rd vms task 9s wcet then it will WCET[2][8]
- */
-double WCET[M][N] = {{14, 13, 11, 13, 12, 13, 7, 5, 18, 21},
-                     {16, 19, 13, 8, 13, 16, 15, 11, 12, 7},
-                     {9, 18, 19, 17, 10, 9, 11, 14, 20, 16}};
-
-// average execution time ETAvg
-double ETAvg[N];
-// worst execution times of each when Ku faults occur
-double ETworst[M][N];
-// max ETworst
-double maxETworst[N];
-// Upward ranks for all the tasks
-double UpWardRanks[N] = {}; // primarily everything is going to have ranks 0
-// communication cost for each task with respect to each task
-double communicationCosts[N][N];
-
-struct Edge {
-  int from, to;
-  double weight;
-};
-
-vector<Edge> edges = {{0, 1, 18}, {0, 2, 12}, {0, 3, 9},  {0, 4, 11},
-                      {0, 5, 14},
-
-                      {1, 7, 19}, {1, 8, 16}, {2, 6, 23}, {3, 7, 27},
-                      {3, 8, 23}, {4, 8, 13}, {5, 7, 15},
-
-                      {6, 9, 17}, {7, 9, 11}, {8, 9, 13}};
-
-// adjacency matrix for the given graph
-vector<vector<pair<int, double>>> graph(N);
 
 // number of check points thats needed
 double calculateNumberofCheckPoints(double et) {
@@ -83,7 +43,7 @@ void initializeWorkFlow() {
   // build the dag
   for (auto e : edges) {
     graph[e.from].push_back({e.to, e.weight});
-    communicationCosts[e.from][e.to] = e.weight / bandwith;
+    communicationCosts[e.from][e.to] = e.weight / bandwidth;
   }
 
   // calculate the average execution time of the task
@@ -93,6 +53,23 @@ void initializeWorkFlow() {
       sum += WCET[j][i];
     }
     ETAvg[i] = sum / M;
+  }
+
+  // calculate ETbest for all tasks
+  for(int i = 0; i < N; i++){
+      for(int k = 0; k < M; k++){
+          double Nt = calculateNumberofCheckPoints(WCET[k][i]);
+          ETbest[k][i] = calculateEtBest(WCET[k][i], Nt);
+      }
+  }
+
+  // calculate the ETbest(i) the paper doesnt provide any explicit formula so we are taking the average
+  for(int i = 0; i < N; i++){
+      double sum = 0;
+      for(int k = 0; k < M; k++){
+          sum += ETbest[k][i];
+      }
+      ETbestI[i] = sum / M;
   }
 
   // calculate ETworst for all the tasks
