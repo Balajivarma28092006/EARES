@@ -62,7 +62,7 @@ void deadlineParition() {
       // finding all the preds
       for (int j = 0; j < N; j++) {
         if (communicationCosts[j][i] > 0) {
-          double time = EST[j] + ETbestI[j] + communicationCosts[j][i];
+          double time = EST[j] + ETbestI[i] + communicationCosts[j][i];
           maxTime = max(maxTime, time);
         }
       }
@@ -107,6 +107,16 @@ void deadlineParition() {
   }
 }
 
+void ScalingFactor(){
+    double SC = 0;
+    double avgET = 0;
+    for(int i: CriticalPath){
+        avgET += ETAvg[i];
+    }
+    SC = ((LFT[N - 1] - EST[0]) - CriticalPathLength) / avgET;
+    cout << "Scaling factor: " << SC << "\n";
+}
+
 void printDeadlines() {
   cout << fixed << setprecision(2);
 
@@ -121,4 +131,7 @@ void printDeadlines() {
   for (int i = 0; i < N; i++) {
     cout << "t" << i + 1 << "\t" << EST[i] << "\t" << LFT[i] << "\n";
   }
+
+  cout << "\n";
+  ScalingFactor();
 }
