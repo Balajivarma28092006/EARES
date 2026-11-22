@@ -1,31 +1,36 @@
-EARES Algorithm
+# EARES Algorithm
 
-Prerequisites
+## Prerequisites
 
-- Compiler: "g++" supporting C++17 or later
-- Build Tool: "make"
+- **Compiler:** `g++` supporting C++17 or later
+- **Build Tool:** `make`
 
-Building and Running
+## Building and Running
 
-Compile and run the project using the included "Makefile":
+Compile and run the project using the included `Makefile`:
 
+```bash
 # Compile and execute the program
 make
 
 # Clean compiled object files and executable
 make clean
+```
 
 Alternatively, compile and run manually:
 
+```bash
 g++ -Wall -std=c++17 main.cpp config.cpp deadline.cpp energyPartitioning.cpp workflow.cpp -o main.exe
 ./main.exe
+```
 
-Full Sample Output
+## Full Sample Output
 
-1. Task Prioritization & Critical Path
+### 1. Task Prioritization & Critical Path
 
-Tasks are arranged in descending order of URank, prioritizing tasks with higher upward rank values.
+Tasks are arranged in descending order of URank.
 
+```text
 Task    ETAvg   MaxETworst  URank
 t1      13.00   19.88       108.00
 t4      12.67   20.99       80.00
@@ -42,11 +47,13 @@ Task scheduling order: t1 t4 t3 t2 t5 t6 t9 t7 t8 t10
 
 Critical Path: t1 t2 t9 t10
 Critical Path Length: 108.00
+```
 
-2. Deadline Distribution
+### 2. Deadline Distribution
 
-Tasks are listed in the same descending URank order for consistency.
+Tasks are listed in descending URank order.
 
+```text
 Task    EST     LFT     EET     Deadline
 t1      0.00    13.43   13.43   13.43
 t4      22.00   39.67   17.67   39.67
@@ -60,11 +67,13 @@ t8      66.67   85.57   18.91   85.57
 t10     96.57   110.00  13.43   110.00
 
 Scaling factor: 0.03
+```
 
-3. Energy Assignment & VM Allocation
+### 3. Energy Assignment & VM Allocation
 
-Tasks are listed in descending URank order, along with their respective energy assignments and VM allocations.
+Tasks are listed in descending URank order.
 
+```text
 Energy assignment and Vm assigning
 
 Task    d(ti)   Egiven  vm      f       E(ti)   R(ti)
@@ -82,14 +91,16 @@ t10     110.00  12.5788 vm2     1.00    5.1800  0.9985
 E(G) = 72.6012
 R(G) = 0.9738
 SL(G) = 89.25
+```
 
-4. Summary Metrics
+### 4. Summary Metrics
 
-Metric| Description| Value
-"E(G)"| Total energy consumed by the workflow| 72.6012
-"R(G)"| Overall workflow reliability| 0.9738
-"SL(G)"| Total Schedule Length / Makespan| 89.25
+| Metric | Description | Value |
+|---|---|---:|
+| `E(G)` | Total energy consumed by the workflow | 72.6012 |
+| `R(G)` | Overall workflow reliability | 0.9738 |
+| `SL(G)` | Total Schedule Length / Makespan | 89.25 |
 
 ---
 
-Note: All task-related output sections follow the same descending URank order. The critical path remains in its original dependency sequence and is not rearranged according to URank.
+**Note:** All task-related output sections follow the same descending URank order. The critical path remains in its original dependency sequence and is not rearranged according to URank.
