@@ -1,5 +1,6 @@
 #include "config.h"
 #include "workflowInit.h"
+#include <cmath>
 
 // number of check points thats needed
 double calculateNumberofCheckPoints(double et) {
@@ -95,7 +96,12 @@ void printAll() {
   iota(taskList.begin(), taskList.end(), 0);
 
   stable_sort(taskList.begin(), taskList.end(),
-       [](int a, int b) { return UpWardRanks[a] > UpWardRanks[b]; });
+       [](int a, int b) {
+           if(fabs(UpWardRanks[a] - UpWardRanks[b] < 1e-9)){
+               return a < b;
+           }
+           return UpWardRanks[a] > UpWardRanks[b];
+       });
 
   cout << fixed << setprecision(2);
 

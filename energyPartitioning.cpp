@@ -164,12 +164,12 @@ void EnergyPartitioning() {
 
   cout << fixed << setprecision(4);
   cout << "\nEnergy assignment and Vm assigning\n";
-  cout << "Task\td(ti)\tEgiven\tvm\tf\tE(ti)\tR(ti)\n";
+  cout << "Task\td(ti)\tEgiven\tvm\tf\tE(ti)\tR(ti)\tST(ti)\tFT(ti)\n";
   for (int i : taskList)
     cout << "t" << i + 1 << "\t" << setprecision(2) << Deadlines[i] << "\t"
          << setprecision(4) << Egiven[i] << "\tvm" << vmOf[i] + 1 << "\t"
          << setprecision(2) << fOf[i] << "\t" << setprecision(4) << Eact[i]
-         << "\t" << Ract[i] << "\n";
-  cout << "E(G) = " << used << "   R(G) = " << RG
+         << "\t" << Ract[i] << "\t" << setprecision(2) << ST[i] << "\t" << setprecision(4) << FT[i] << "\n";
+  cout << "\nE(G) = " << used << "   R(G) = " << RG
        << "   SL(G) = " << setprecision(2) << makespan << "\n";
 }
