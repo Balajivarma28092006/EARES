@@ -60,7 +60,7 @@ double ScalingFactor(){
 
 void assignCriticalPathDeadlines(){
     int entry = 0, exit = N - 1;
-    double SCALE = ScalingFactor();
+    // double SCALE = ScalingFactor();
     // calculate the EET for all tasks in the critical path
     for(int task: CriticalPath){
         EET[task] = ETAvg[task] + (
@@ -79,7 +79,7 @@ void assignCriticalPathDeadlines(){
             // finding all the preds
             for (int j = 0; j < N; j++) {
               if (communicationCosts[j][i] > 0) {
-                double time = EST[j] + EET[i] + communicationCosts[j][i];
+                double time = EST[j] + EET[j] + communicationCosts[j][i];
                 maxTime = max(maxTime, time);
               }
             }
@@ -174,10 +174,10 @@ void deadlineParition() {
   }
 
   reverse(CriticalPath.begin(), CriticalPath.end());
-  for (int i = 0; i < CriticalPath.size(); i++) {
+  for (int i = 0; i < (int)CriticalPath.size(); i++) {
     int task = CriticalPath[i];
     CriticalPathLength += ETAvg[task];
-    if (i + 1 < CriticalPath.size()) {
+    if (i + 1 < (int)CriticalPath.size()) {
       int next = CriticalPath[i + 1];
       CriticalPathLength += communicationCosts[task][next];
     }

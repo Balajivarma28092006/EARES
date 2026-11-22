@@ -125,7 +125,7 @@ void EnergyPartitioning() {
               start = max(start, FT[j] + CC);
             }
           }
-          double AFT = start + c.etBest;
+          double AFT = start + c.et;
           if (R > bestR && AFT < Deadlines[i]) {
             bestR = R;
             bestK = k;
