@@ -1,0 +1,2 @@
+-- VM's can run on different voltages or frequencies and if difined by triples as {V, F, C} where V is processors voltage, F is the frequency of the VM and C is the capacity of instructions which can be measured using MIP's known as millions of instructions per seconds.
+-- d sensitivity of fault is not given

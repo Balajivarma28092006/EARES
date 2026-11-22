@@ -4,6 +4,7 @@
 #include "config.h"
 
 void initializeWorkFlow();
+void calculateRank();
 void printAll();
 
 #endif

@@ -94,7 +94,7 @@ void printAll() {
   vector<int> taskList(N);
   iota(taskList.begin(), taskList.end(), 0);
 
-  sort(taskList.begin(), taskList.end(),
+  stable_sort(taskList.begin(), taskList.end(),
        [](int a, int b) { return UpWardRanks[a] > UpWardRanks[b]; });
 
   cout << fixed << setprecision(2);
