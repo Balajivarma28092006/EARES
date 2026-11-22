@@ -1,5 +1,6 @@
 #include "deadline.h"
 #include "config.h"
+#include <climits>
 
 // deadlines store for every task
 double Deadlines[N] = {};
@@ -47,6 +48,81 @@ vector<int> getTopoOrder() {
   return topoOrder;
 }
 
+double ScalingFactor(){
+    double SC = 0;
+    double avgET = 0;
+    for(int i: CriticalPath){
+        avgET += ETAvg[i];
+    }
+    SC = ((LFT[N - 1] - EST[0]) - CriticalPathLength) / avgET;
+    return SC;
+}
+
+void assignCriticalPathDeadlines(){
+    int entry = 0, exit = N - 1;
+    double SCALE = ScalingFactor();
+    // calculate the EET for all tasks in the critical path
+    for(int task: CriticalPath){
+        EET[task] = ETAvg[task] + (
+            ScalingFactor() * ETAvg[task]
+        );
+    }
+
+    for(int i = 0; i < N; i++){
+        if(!isCp[i]) continue;
+
+        // recalculate the EST of the current task using the EET
+          if (entry == i) {
+            EST[i] = 0;
+          } else {
+            double maxTime = 0;
+            // finding all the preds
+            for (int j = 0; j < N; j++) {
+              if (communicationCosts[j][i] > 0) {
+                double time = EST[j] + EET[i] + communicationCosts[j][i];
+                maxTime = max(maxTime, time);
+              }
+            }
+            EST[i] = maxTime;
+        }
+        Deadlines[i] = (i == exit) ? DEADLINE: EST[i] + EET[i];
+        LFT[i] = Deadlines[i];
+        if(i == exit){
+            EET[i] = DEADLINE - EST[i];
+        }
+        marked[i] = true;
+    }
+
+    // now we need to go for unmarked things and recalculate the things
+    for(int idx = N - 1; idx >= 0; idx--){
+        auto tasks = getTopoOrder();
+        int task = tasks[idx];
+
+        if(isCp[task]){
+            continue;
+        }
+
+        // update the LFT
+        double minLFT = LLONG_MAX;
+        bool hasSuccessor = false;
+
+        for(auto [next, weight]: graph[task]){
+            hasSuccessor = true;
+            double midLFT = LFT[next] - EET[next] - communicationCosts[task][next];
+            minLFT = min(minLFT, midLFT);
+        }
+
+        if(hasSuccessor){
+            LFT[task] = minLFT;
+        }else{
+            LFT[task] = DEADLINE;
+        }
+        Deadlines[task] = LFT[task];
+        EET[task] = LFT[task] - EST[task];
+        marked[task] = true;
+    }
+}
+
 void deadlineParition() {
   CriticalPathLength = 0;
   // first get the order of the tasks so tasks with less pred's come first
@@ -62,12 +138,13 @@ void deadlineParition() {
       // finding all the preds
       for (int j = 0; j < N; j++) {
         if (communicationCosts[j][i] > 0) {
-          double time = EST[j] + ETbestI[i] + communicationCosts[j][i];
+          double time = EST[j] + ETAvg[j] + communicationCosts[j][i];
           maxTime = max(maxTime, time);
         }
       }
       EST[i] = maxTime;
-      LFT[i] = EST[i] + ETbestI[i];
+      if(i != exit) LFT[i] = EST[i] + ETAvg[i];
+      else LFT[i] = DEADLINE;
     }
   }
 
@@ -99,23 +176,17 @@ void deadlineParition() {
   reverse(CriticalPath.begin(), CriticalPath.end());
   for (int i = 0; i < CriticalPath.size(); i++) {
     int task = CriticalPath[i];
-    CriticalPathLength += ETbestI[task];
+    CriticalPathLength += ETAvg[task];
     if (i + 1 < CriticalPath.size()) {
       int next = CriticalPath[i + 1];
       CriticalPathLength += communicationCosts[task][next];
     }
   }
+
+  // update the EST for all the tasks using EET value of the task CP instead of ETbest
+  assignCriticalPathDeadlines();
 }
 
-void ScalingFactor(){
-    double SC = 0;
-    double avgET = 0;
-    for(int i: CriticalPath){
-        avgET += ETAvg[i];
-    }
-    SC = ((LFT[N - 1] - EST[0]) - CriticalPathLength) / avgET;
-    cout << "Scaling factor: " << SC << "\n";
-}
 
 void printDeadlines() {
   cout << fixed << setprecision(2);
@@ -126,12 +197,14 @@ void printDeadlines() {
 
   cout << "\nCritical Path Length: " << CriticalPathLength << "\n";
 
-  cout << "\n\nTask\tEST\tLFT\n";
+  cout << "\n\nTask\tEST\tLFT\tEET\tDeadline\n";
 
   for (int i = 0; i < N; i++) {
-    cout << "t" << i + 1 << "\t" << EST[i] << "\t" << LFT[i] << "\n";
+    cout << "t" << i + 1 << "\t" << EST[i] << "\t" << LFT[i]
+         << "\t" << EET[i] << "\t" << Deadlines[i] << "\n";
   }
 
   cout << "\n";
-  ScalingFactor();
+  double sc = ScalingFactor();
+    cout << "Scaling factor: " << sc << "\n";
 }
