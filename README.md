@@ -102,5 +102,3 @@ SL(G) = 89.25
 | `SL(G)` | Total Schedule Length / Makespan | 89.25 |
 
 ---
-
-**Note:** All task-related output sections follow the same descending URank order. The critical path remains in its original dependency sequence and is not rearranged according to URank.
