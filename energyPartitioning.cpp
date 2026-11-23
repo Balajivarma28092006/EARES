@@ -2,7 +2,6 @@
 #include "config.h"
 #include "deadline.h"
 #include "workflowInit.h"
-#include <climits>
 
 struct VmPower {
   double Pind, Cef, m, f_low, f_max;
