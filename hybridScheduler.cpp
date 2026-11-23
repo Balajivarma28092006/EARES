@@ -31,6 +31,7 @@ double energy(int k, int i, double f) {
 struct Ckpt {
   double et, n, etBest, L, etWorst;
 };
+
 Ckpt checkpoints(int k, int i, double f) { // Eq. 10-13
   Ckpt c;
   c.et = execTime(k, i, f);
@@ -145,5 +146,6 @@ Result runOCTScheduler(RankingMethod method, bool allowMinimumReserveFallback, b
       Ep[i] = min(Emax[i], (E_GOAL - EminG) * e[i] + Emin[i]);
     }
 
-
+    Result r = {};
+    return r;
 }
